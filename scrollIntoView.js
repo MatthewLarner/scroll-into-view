@@ -10,7 +10,7 @@ function getTargetScrollLocation(target, parent){
         differenceX,
         differenceY;
 
-    if(parent === window){
+    if(parent === window || parent === document.body){
         x = targetPosition.left + window.scrollX - window.innerWidth / 2 + Math.min(targetPosition.width, window.innerWidth) / 2;
         y = targetPosition.top + window.scrollY - window.innerHeight / 2 + Math.min(targetPosition.height, window.innerHeight) / 2;
         x = Math.max(Math.min(x, document.body.clientWidth - window.innerWidth / 2), 0);
@@ -60,8 +60,9 @@ module.exports = function scrollTo(target, animationTime, curve){
 
     var endTime = Date.now() + animationTime,
         easing = Bezier.css[curve],
-        differenceY = getTargetScrollLocation(target, parent).differenceY,
         positionY;
+
+    var differenceY = getTargetScrollLocation(target, parent).differenceY;
 
     targetElement = target;
 
@@ -80,14 +81,8 @@ module.exports = function scrollTo(target, animationTime, curve){
                 currentTime = Date.now(),
                 curvePosition = ((animationTime - (endTime - currentTime)) / animationTime);
 
-            // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y, location.differenceY);
-            // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y - (location.differenceY - location.differenceY * (easing(curvePosition))));
-            // console.log(location.y, location.y * easing(curvePosition));
-            // console.log(location.y, location.differenceY, location.y * easing(curvePosition));
-
-            // positionY = location.y - (location.differenceY - location.differenceY * easing(curvePosition));
             positionY = location.y - (differenceY - differenceY * easing(curvePosition));
-            // positionY = startPosition.differenceY - location.y * easing(curvePosition);
+
             console.log('actual', positionY, 'time left: ', endTime - currentTime, 'curve position:', curvePosition, 'location.y: ', location.y, 'differenceY:', location.differenceY);
 
             if(currentTime > endTime){
