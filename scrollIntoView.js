@@ -1,5 +1,6 @@
 var targetElement,
-    animationId;
+    animationId,
+    Bezier = require('bezier-easing');
 
 function getTargetScrollLocation(target, parent){
     var targetPosition = target.getBoundingClientRect(),
@@ -46,33 +47,67 @@ function setElementScroll(element, x, y){
     }
 }
 
-module.exports = function scrollTo(target, stepValue){
+module.exports = function scrollTo(target, animationTime, curve){
     if(!target){
         return;
     }
 
-    stepValue = stepValue || 0.3;
+    animationTime = animationTime || 2000;
+    curve = curve || 'ease';
+
+    var parent = target.parentElement;
+
+
+    var endTime = Date.now() + animationTime,
+        easing = Bezier.css[curve],
+        startPosition = getTargetScrollLocation(target, parent),
+        positionY;
+
+    // for (var t = 0; t <= 1; t += 0.01) {
+    //     console.log(easing(t));
+    // }
 
     targetElement = target;
+
+
 
     function run(parent, startTime){
         animationId = requestAnimationFrame(function(){
             if(target !== targetElement) {
                 cancelAnimationFrame(animationId);
                 target = targetElement;
-                startTime = +new Date();
+                endTime = Date.now() + animationTime;
             }
 
-            var location = getTargetScrollLocation(target, parent);
+            var location = getTargetScrollLocation(target, parent),
+                currentTime = Date.now(),
+                curvePosition = ((animationTime - (endTime - currentTime)) / animationTime);
 
-            if(new Date() - startTime > 100 / stepValue){
+                // console.log(curvePosition, easing(curvePosition));
+
+                // console.log(startPosition.differenceY);
+
+                // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y, location.differenceY);
+                // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y - (location.differenceY - location.differenceY * (easing(curvePosition))));
+
+                // console.log(location.y, location.y * easing(curvePosition));
+                //
+                // console.log(location.y, location.differenceY, location.y * easing(curvePosition));
+
+
+            positionY = location.y - location.differenceY * easing(curvePosition);
+            console.log('actual', positionY, 'time left: ', endTime - currentTime, 'curve position:', curvePosition);
+
+            // console.log(positionY);
+
+            if(currentTime > endTime){
                 // Give up
                 return;
             }
 
             setElementScroll(parent,
-                location.x - (location.differenceX - location.differenceX * stepValue),
-                location.y - (location.differenceY - location.differenceY * stepValue)
+                location.x,
+                positionY
             );
 
             if(Math.abs(location.differenceY) > 1 || Math.abs(location.differenceX) > 1){
@@ -84,8 +119,6 @@ module.exports = function scrollTo(target, stepValue){
     function transitionScrollTo(parent){
         run(parent, +new Date());
     }
-
-    var parent = target.parentElement;
 
     while(parent && parent.tagName !== 'BODY'){
         if(
