@@ -18,9 +18,8 @@ use it
 
 Also accepts animation time and an array of points to create a cubic bezier curve.
 
-    scrollIntoView(someElement, animationTime, timingFunction)
-
 ```javascript
+scrollIntoView(someElement, animationTime, timingFunction)
 scrollIntoView(someElement, 2000, [0.42, 0.0, 0.58, 1.0])
 ```
 
