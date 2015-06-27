@@ -83,22 +83,19 @@ module.exports = function scrollTo(target, animationTime, curve){
                 currentTime = Date.now(),
                 curvePosition = ((animationTime - (endTime - currentTime)) / animationTime);
 
-                // console.log(curvePosition, easing(curvePosition));
+            // console.log(curvePosition, easing(curvePosition));
 
-                // console.log(startPosition.differenceY);
+            // console.log(startPosition.differenceY);
 
-                // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y, location.differenceY);
-                // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y - (location.differenceY - location.differenceY * (easing(curvePosition))));
+            // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y, location.differenceY);
+            // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y - (location.differenceY - location.differenceY * (easing(curvePosition))));
 
-                // console.log(location.y, location.y * easing(curvePosition));
-                //
-                // console.log(location.y, location.differenceY, location.y * easing(curvePosition));
+            // console.log(location.y, location.y * easing(curvePosition));
+            //
+            // console.log(location.y, location.differenceY, location.y * easing(curvePosition));
 
-
-            positionY = location.y - location.differenceY * easing(curvePosition);
+            positionY = location.y * easing(curvePosition);
             console.log('actual', positionY, 'time left: ', endTime - currentTime, 'curve position:', curvePosition);
-
-            // console.log(positionY);
 
             if(currentTime > endTime){
                 // Give up
