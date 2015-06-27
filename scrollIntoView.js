@@ -60,12 +60,8 @@ module.exports = function scrollTo(target, animationTime, curve){
 
     var endTime = Date.now() + animationTime,
         easing = Bezier.css[curve],
-        startPosition = getTargetScrollLocation(target, parent),
+        differenceY = getTargetScrollLocation(target, parent).differenceY,
         positionY;
-
-    // for (var t = 0; t <= 1; t += 0.01) {
-    //     console.log(easing(t));
-    // }
 
     targetElement = target;
 
@@ -77,25 +73,22 @@ module.exports = function scrollTo(target, animationTime, curve){
                 cancelAnimationFrame(animationId);
                 target = targetElement;
                 endTime = Date.now() + animationTime;
+                differenceY = getTargetScrollLocation(target, parent).differenceY;
             }
 
             var location = getTargetScrollLocation(target, parent),
                 currentTime = Date.now(),
                 curvePosition = ((animationTime - (endTime - currentTime)) / animationTime);
 
-            // console.log(curvePosition, easing(curvePosition));
-
-            // console.log(startPosition.differenceY);
-
             // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y, location.differenceY);
             // console.log(location.y - (location.differenceY - location.differenceY * 0.05), location.y - (location.differenceY - location.differenceY * (easing(curvePosition))));
-
             // console.log(location.y, location.y * easing(curvePosition));
-            //
             // console.log(location.y, location.differenceY, location.y * easing(curvePosition));
 
-            positionY = location.y * easing(curvePosition);
-            console.log('actual', positionY, 'time left: ', endTime - currentTime, 'curve position:', curvePosition);
+            // positionY = location.y - (location.differenceY - location.differenceY * easing(curvePosition));
+            positionY = location.y - (differenceY - differenceY * easing(curvePosition));
+            // positionY = startPosition.differenceY - location.y * easing(curvePosition);
+            console.log('actual', positionY, 'time left: ', endTime - currentTime, 'curve position:', curvePosition, 'location.y: ', location.y, 'differenceY:', location.differenceY);
 
             if(currentTime > endTime){
                 // Give up
